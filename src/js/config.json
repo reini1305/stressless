@@ -19,39 +19,39 @@
             },
             {
             "type": "toggle",
-            "messsageKey": "border",
+            "messageKey": "border",
             "label": "Enable border around inner circle",
             "defaultValue": true
             },
             {
             "type": "toggle",
-            "messsageKey": "animation",
+            "messageKey": "animation",
             "label": "Startup animation",
             "defaultValue": true
             },
             {
             "type": "toggle",
-            "messsageKey": "shake",
+            "messageKey": "shake",
             "label": "Shake to show the time",
             "defaultValue": true
             },
             {
             "type": "select",
-            "messsageKey": "colorscheme",
+            "messageKey": "colorscheme",
             "defaultValue": "0",
             "label": "Color scheme",
             "options": [
                         {
-                        "label": "Woods",
-                        "value": "0"
+                        "label": "Dark to Light",
+                        "value": 0
                         },
                         {
-                        "label": "Reddish",
-                        "value": "1"
+                        "label": "Light to Dark",
+                        "value": 1
                       },
                       {
                       "label": "Fancy",
-                      "value": "2"
+                      "value": 2
                       }
                         ]
             }

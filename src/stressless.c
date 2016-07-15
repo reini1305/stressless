@@ -62,15 +62,34 @@ static void hands_update_proc(Layer *layer, GContext *ctx) {
   int radius = center.x*t->tm_min*s_animation_percent/6000;
   graphics_context_set_fill_color(ctx, curr_color);
   graphics_fill_circle(ctx,center, radius);
-  graphics_context_set_fill_color(ctx, GColorBlack);
-  graphics_context_set_stroke_width(ctx,2);
-  graphics_draw_circle(ctx,center, radius);
+  if(enamel_get_border()) {
+    graphics_context_set_fill_color(ctx, GColorBlack);
+    graphics_context_set_stroke_width(ctx,2);
+    graphics_draw_circle(ctx,center, radius);
+  }
 }
 
 static void implementation_update(Animation *animation,
                                   const AnimationProgress progress) {
   // Animate some completion variable
   s_animation_percent = ((int)progress * 100) / ANIMATION_NORMALIZED_MAX;
+  layer_mark_dirty(hands_layer);
+}
+
+static void settings_updated(void) {
+  for(int i=0;i<24;i++) {
+    if(enamel_get_colorscheme()==2) { // fancy
+      if(i%2)
+        color_mapping[i] = 63-i;
+      else
+        color_mapping[i] = i;
+    } else if(enamel_get_colorscheme()==0) { // dark to light
+        color_mapping[i] = i*2;
+    }
+    else if(enamel_get_colorscheme()==1) { // light to dark
+        color_mapping[i] = 63-i*2;
+    }
+  }
   layer_mark_dirty(hands_layer);
 }
 
@@ -94,21 +113,27 @@ static void window_load(Window *window) {
   layer_set_hidden(text_layer_get_layer(time_layer),true);
   accel_tap_service_subscribe(accel_tap_handler);
 
-  // Create a new Animation
-  s_animation = animation_create();
-  animation_set_delay(s_animation, 100);
-  animation_set_duration(s_animation, 500);
+  settings_updated();
+  enamel_register_settings_received(settings_updated);
+  
+  if(enamel_get_animation()) {
+    // Create a new Animation
+    s_animation = animation_create();
+    animation_set_delay(s_animation, 100);
+    animation_set_duration(s_animation, 500);
 
-  // Create the AnimationImplementation
-  static const AnimationImplementation implementation = {
-    .update = implementation_update
-  };
-  animation_set_implementation(s_animation, &implementation);
+    // Create the AnimationImplementation
+    static const AnimationImplementation implementation = {
+      .update = implementation_update
+    };
+    animation_set_implementation(s_animation, &implementation);
+  } else {
+    // force update
+   time_t now = time(NULL);
+   struct tm *t = localtime(&now);
+   handle_tick(t, MINUTE_UNIT);
+  }
 
-  // force update
-//  time_t now = time(NULL);
-//  struct tm *t = localtime(&now);
-//  handle_tick(t, MINUTE_UNIT);
 
   events_tick_timer_service_subscribe(MINUTE_UNIT, handle_tick);
   animation_schedule(s_animation);
@@ -131,12 +156,6 @@ static void init(void) {
     .load = window_load,
     .unload = window_unload,
   });
-  for(int i=0;i<24;i++) {
-    if(i%2)
-      color_mapping[i] = 63-i;
-    else
-      color_mapping[i] = i;
-  }
     // Push the window onto the stack
   const bool animated = true;
   window_stack_push(window, animated);
