@@ -1,0 +1,64 @@
+[
+{
+  "type": "heading",
+  "id": "main-heading",
+  "defaultValue": "Stressless Configuration",
+  "size": 1
+},
+{
+  "type": "text",
+  "defaultValue": "If you like what I'm doing, consider a donation: <a href='https://pledgie.com/campaigns/28156'><img alt='Click here to lend your support to: Christian Reinbachers Pebble Apps and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/28156.png?skin_name=chrome' border='0' ></a>",
+  "id": "donationtext"
+},
+{
+  "type": "section",
+  "items": [
+            {
+            "type": "heading",
+            "defaultValue": "Settings"
+            },
+            {
+            "type": "toggle",
+            "messsageKey": "border",
+            "label": "Enable border around inner circle",
+            "defaultValue": true
+            },
+            {
+            "type": "toggle",
+            "messsageKey": "animation",
+            "label": "Startup animation",
+            "defaultValue": true
+            },
+            {
+            "type": "toggle",
+            "messsageKey": "shake",
+            "label": "Shake to show the time",
+            "defaultValue": true
+            },
+            {
+            "type": "select",
+            "messsageKey": "colorscheme",
+            "defaultValue": "0",
+            "label": "Color scheme",
+            "options": [
+                        {
+                        "label": "Woods",
+                        "value": "0"
+                        },
+                        {
+                        "label": "Reddish",
+                        "value": "1"
+                      },
+                      {
+                      "label": "Fancy",
+                      "value": "2"
+                      }
+                        ]
+            }
+          ]
+},
+{
+  "type": "submit",
+  "defaultValue": "Save"
+}
+]
