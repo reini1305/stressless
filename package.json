@@ -11,15 +11,16 @@
     "pebble-clay": "^1.0.2"
   },
   "pebble": {
-    "displayName": "stressless",
+    "displayName": "Stress Less",
     "uuid": "ce33feef-def1-4b3f-b5a7-612493b3cc2c",
     "sdkVersion": "3",
     "enableMultiJS": true,
     "targetPlatforms": [
-      "chalk"
+      "chalk",
+      "basalt"
     ],
     "watchapp": {
-      "watchface": false
+      "watchface": true
     },
     "messageKeys": [
       "border",
@@ -34,6 +35,13 @@
           "characterRegex": "[0-9:]",
           "name": "FONT_DIGITAL_62",
           "file": "fonts/Quirkus.ttf"
+        },
+        {
+          "memoryFormat": "1Bit",
+          "menuIcon": true,
+          "type": "bitmap",
+          "name": "IMAGE_MENU_ICON",
+          "file": "hourglass.png"
         }
       ]
     }

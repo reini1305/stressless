@@ -58,6 +58,7 @@ static void hands_update_proc(Layer *layer, GContext *ctx) {
   graphics_context_set_fill_color(ctx, old_color);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 
+#ifdef PBL_ROUND
   //draw circle with current color with a radius based on the current minute
   int radius = center.x*t->tm_min*s_animation_percent/6000;
   graphics_context_set_fill_color(ctx, curr_color);
@@ -67,6 +68,20 @@ static void hands_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_stroke_width(ctx,2);
     graphics_draw_circle(ctx,center, radius);
   }
+#else
+//draw rectangle with current color with a distance to screen border based on the current minute
+int inset_x = center.x-(center.x*t->tm_min*s_animation_percent/6000);
+int inset_y = center.y-(center.y*t->tm_min*s_animation_percent/6000);
+APP_LOG(APP_LOG_LEVEL_DEBUG,"%d %d ",inset_x,inset_y);
+GRect rectangle = grect_inset(bounds,GEdgeInsets(inset_y,inset_x));
+graphics_context_set_fill_color(ctx, curr_color);
+graphics_fill_rect(ctx,rectangle,0,GCornerNone);
+if(enamel_get_border()) {
+  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_context_set_stroke_width(ctx,2);
+  graphics_draw_rect(ctx,rectangle);
+}
+#endif
 }
 
 static void implementation_update(Animation *animation,
@@ -115,7 +130,7 @@ static void window_load(Window *window) {
 
   settings_updated();
   enamel_register_settings_received(settings_updated);
-  
+
   if(enamel_get_animation()) {
     // Create a new Animation
     s_animation = animation_create();
@@ -127,13 +142,10 @@ static void window_load(Window *window) {
       .update = implementation_update
     };
     animation_set_implementation(s_animation, &implementation);
-  } else {
-    // force update
-   time_t now = time(NULL);
-   struct tm *t = localtime(&now);
-   handle_tick(t, MINUTE_UNIT);
   }
-
+  time_t now = time(NULL);
+  struct tm *t = localtime(&now);
+  handle_tick(t, MINUTE_UNIT);
 
   events_tick_timer_service_subscribe(MINUTE_UNIT, handle_tick);
   animation_schedule(s_animation);
