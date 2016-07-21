@@ -58,29 +58,26 @@ static void hands_update_proc(Layer *layer, GContext *ctx) {
   graphics_context_set_fill_color(ctx, old_color);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 
+  int inset_x = center.x-(center.x*t->tm_min*s_animation_percent/6000);
+  int inset_y = center.y-(center.y*t->tm_min*s_animation_percent/6000);
+  GRect rectangle = grect_inset(bounds,GEdgeInsets(inset_y,inset_x));
 #ifdef PBL_ROUND
   //draw circle with current color with a radius based on the current minute
-  int radius = center.x*t->tm_min*s_animation_percent/6000;
   graphics_context_set_fill_color(ctx, curr_color);
-  graphics_fill_circle(ctx,center, radius);
+  graphics_fill_radial(ctx,rectangle,GOvalScaleModeFitCircle,center.x,DEG_TO_TRIGANGLE(0),DEG_TO_TRIGANGLE(360));
+  if(enamel_get_border()) {
+    graphics_context_set_fill_color(ctx, GColorBlack);
+    graphics_fill_radial(ctx,rectangle,GOvalScaleModeFitCircle,2,DEG_TO_TRIGANGLE(0),DEG_TO_TRIGANGLE(360));
+  }
+#else
+  //draw rectangle with current color with a distance to screen border based on the current minute
+  graphics_context_set_fill_color(ctx, curr_color);
+  graphics_fill_rect(ctx,rectangle,0,GCornerNone);
   if(enamel_get_border()) {
     graphics_context_set_fill_color(ctx, GColorBlack);
     graphics_context_set_stroke_width(ctx,2);
-    graphics_draw_circle(ctx,center, radius);
+    graphics_draw_rect(ctx,rectangle);
   }
-#else
-//draw rectangle with current color with a distance to screen border based on the current minute
-int inset_x = center.x-(center.x*t->tm_min*s_animation_percent/6000);
-int inset_y = center.y-(center.y*t->tm_min*s_animation_percent/6000);
-APP_LOG(APP_LOG_LEVEL_DEBUG,"%d %d ",inset_x,inset_y);
-GRect rectangle = grect_inset(bounds,GEdgeInsets(inset_y,inset_x));
-graphics_context_set_fill_color(ctx, curr_color);
-graphics_fill_rect(ctx,rectangle,0,GCornerNone);
-if(enamel_get_border()) {
-  graphics_context_set_fill_color(ctx, GColorBlack);
-  graphics_context_set_stroke_width(ctx,2);
-  graphics_draw_rect(ctx,rectangle);
-}
 #endif
 }
 
