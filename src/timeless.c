@@ -9,6 +9,7 @@ static uint8_t color_mapping[24];
 static Animation *s_animation;
 static int16_t s_animation_percent;
 static AppTimer *s_hide_timer;
+static EventHandle s_settings_event_handle;
 
 static void handle_tick(struct tm *tick_time, TimeUnits units_changed) {
   static char time_text[] = "00:00";
@@ -88,7 +89,7 @@ static void implementation_update(Animation *animation,
   layer_mark_dirty(hands_layer);
 }
 
-static void settings_updated(void) {
+static void settings_updated(void* context) {
   for(int i=0;i<24;i++) {
     if(enamel_get_colorscheme()==2) { // fancy
       if(i%2)
@@ -125,8 +126,8 @@ static void window_load(Window *window) {
   layer_set_hidden(text_layer_get_layer(time_layer),true);
   accel_tap_service_subscribe(accel_tap_handler);
 
-  settings_updated();
-  enamel_register_settings_received(settings_updated);
+  settings_updated(NULL);
+  s_settings_event_handle = enamel_settings_received_subscribe(settings_updated,NULL);
 
   if(enamel_get_animation()) {
     // Create a new Animation
@@ -173,6 +174,7 @@ static void init(void) {
 
 static void deinit(void) {
   // Deinit Enamel to unregister App Message handlers and save settings
+  enamel_settings_received_unsubscribe(s_settings_event_handle);
   enamel_deinit();
   window_destroy(window);
 }
