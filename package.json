@@ -1,14 +1,14 @@
 {
   "name": "timeless",
   "author": "Christian Reinbacher",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "keywords": [
     "pebble-app"
   ],
   "private": true,
   "dependencies": {
-    "enamel": "^1.2.1",
-    "pebble-clay": "^1.0.2"
+    "enamel": "^1.2.4",
+    "pebble-clay": "^1.0.3"
   },
   "pebble": {
     "displayName": "Time Less",
@@ -17,7 +17,8 @@
     "enableMultiJS": true,
     "targetPlatforms": [
       "chalk",
-      "basalt"
+      "basalt",
+      "emery"
     ],
     "watchapp": {
       "watchface": true
